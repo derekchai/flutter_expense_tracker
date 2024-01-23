@@ -75,8 +75,8 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     late Widget page;
-    var userModel = context.watch<UserModel>();
-    var selectedAccount = userModel.selectedAccount;
+    // var userModel = context.watch<UserModel>();
+    // var selectedAccount = userModel.selectedAccount;
 
     switch (navigationRailIndex) {
       case 0: 
@@ -132,9 +132,9 @@ class _MyHomePageState extends State<MyHomePage> {
         var userModel = context.watch<UserModel>();
         var selectedAccount = userModel.selectedAccount;
 
-        TransactionCategory _defaultCategory = TransactionCategory("DEFAULT CATEGORY", Icon(Icons.attach_money), CategoryType.expense);
+        TransactionCategory defaultCategory = TransactionCategory("DEFAULT CATEGORY", Icons.attach_money, CategoryType.expense);
 
-        TransactionCategory? selectedCategory = _defaultCategory;
+        TransactionCategory? selectedCategory = defaultCategory;
 
         return StatefulBuilder(
           builder: (context, setState) => AlertDialog(
@@ -224,7 +224,7 @@ class _MyHomePageState extends State<MyHomePage> {
               // ? Add button.
               TextButton(
                 onPressed: () {
-                  if (amountController.text.isEmpty || selectedCategory == _defaultCategory) {
+                  if (amountController.text.isEmpty || selectedCategory == defaultCategory) {
                     Navigator.of(context).pop();
                     transactionNameController.clear();
                     amountController.clear();
@@ -265,7 +265,13 @@ class ChooseCategoryDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text("Select category"),
+      title: Row(
+        children: [
+          Expanded(child: Text("Select category")),
+          IconButton(onPressed: doNothing, icon: Icon(Icons.edit)),
+          IconButton(onPressed: (doNothing), icon: Icon(Icons.add)),
+        ],
+      ),
       content: SizedBox(
         width: 500, 
         height: 400, 
@@ -280,7 +286,14 @@ class ChooseCategoryDialog extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    userModel.categories[index].icon,
+                    Icon(
+                      userModel.categories[index].iconData,
+                      color: (userModel.categories[index].categoryType == CategoryType.income) 
+                        ? Colors.green 
+                        : (userModel.categories[index].categoryType == CategoryType.expense) 
+                          ? Colors.red 
+                          : Colors.amber,
+                    ),
                     Text(userModel.categories[index].name),
                   ],
                 ),

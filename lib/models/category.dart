@@ -8,8 +8,8 @@ enum CategoryType {
 
 class TransactionCategory {
   String name;
-  Icon icon;
+  IconData iconData;
   CategoryType categoryType;
 
-  TransactionCategory(this.name, this.icon, this.categoryType);
+  TransactionCategory(this.name, this.iconData, this.categoryType);
 }

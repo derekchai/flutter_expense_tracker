@@ -119,7 +119,7 @@ class DashboardPage extends StatelessWidget {
                   return Card(
                     child: Center(
                       child: ListTile(
-                        leading: selectedAccount.transactions[index].category.icon,
+                        leading: Icon(selectedAccount.transactions[index].category.iconData),
                         title: Text(selectedAccount.transactions[index].description.toString()),
                       
                         subtitle: Text(NumberFormat.simpleCurrency(locale: "en_US").format(selectedAccount.transactions[index].amount)),

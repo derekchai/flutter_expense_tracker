@@ -1,6 +1,5 @@
 import 'dart:collection';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_testing/models/account.dart';
 import 'package:flutter_testing/models/category.dart';
@@ -9,12 +8,12 @@ import 'package:flutter_testing/models/transaction.dart';
 Account _defaultAccount = Account("Default Account", <Transaction>[]);
 
 List<TransactionCategory> _defaultCategories = [
-  TransactionCategory("Wages", const Icon(Icons.money), CategoryType.income),
+  TransactionCategory("Wages", Icons.money, CategoryType.income),
 
-  TransactionCategory("Food", const Icon(Icons.fastfood), CategoryType.expense),
-  TransactionCategory("Fuel", const Icon(Icons.local_gas_station), CategoryType.expense),
-  TransactionCategory("Entertainment", const Icon(Icons.theater_comedy), CategoryType.expense),
-  TransactionCategory("Groceries", const Icon(Icons.local_grocery_store), CategoryType.expense),
+  TransactionCategory("Food", Icons.fastfood, CategoryType.expense),
+  TransactionCategory("Fuel", Icons.local_gas_station, CategoryType.expense),
+  TransactionCategory("Entertainment", Icons.theater_comedy, CategoryType.expense),
+  TransactionCategory("Groceries", Icons.local_grocery_store, CategoryType.expense),
 ];
 
 class UserModel extends ChangeNotifier {
