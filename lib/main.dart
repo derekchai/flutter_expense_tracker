@@ -50,27 +50,25 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
 
   int navigationRailIndex = 0;
-  DateTime selectedDate = DateTime.now();
 
   var transactionNameController = TextEditingController();
   var amountController = TextEditingController();
 
-  Future<DateTime> _selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: selectedDate,
-      firstDate: DateTime(2015, 8),
-      lastDate: DateTime(2101)
-    );
+  DateTime? dateTime = DateTime.now();
 
-    if (picked != null && picked != selectedDate) {
+  _showDatePicker(setState) async {
+    await showDatePicker(
+      context: context,
+      initialDate: dateTime,
+      firstDate: DateTime(2020),
+      lastDate: DateTime(2100),
+    ).then((value) {
       setState(() {
-        selectedDate = picked;
+        if (value != null) {
+          dateTime = value;
+        }
       });
-      debugPrint(selectedDate.toString());
-      return picked;
-    }
-    return selectedDate;
+    });
   }
 
   @override
@@ -116,6 +114,9 @@ class _MyHomePageState extends State<MyHomePage> {
           floatingActionButton: FloatingActionButton(
             onPressed: () async {
               final data = await _openDialog(context);
+
+              debugPrint(data);
+
               if (data == null) return;
               
               setState(() {
@@ -130,105 +131,97 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  Future<TransactionReturnedData?> _openDialog(BuildContext context) {
+  _openDialog(BuildContext context) async {
 
-    return showDialog<TransactionReturnedData>(
+    await showDialog<TransactionReturnedData>(
       context: context,
       builder: (BuildContext context) {
+        var userModel = context.watch<UserModel>();
+        var selectedAccount = userModel.selectedAccount;
 
-        return RawKeyboardListener(
-          focusNode: FocusNode(),
-          onKey: (v) {
-            if (v.logicalKey == LogicalKeyboardKey.enter) {
+        return StatefulBuilder(
 
-            }
-          },
-          child: AlertDialog(
-          
-            // ? Title.
-            title: const Text("Add transaction"),
-            content: 
-                SizedBox(
-                  width: 500,
-                  height: 200,
-                  child: Column(
-                    children: [
-          
-                      // ? Amount field.
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text('\$ ', style: signStyle,),
-                          AutoSizeTextField(
-                            fullwidth: false,
-                            keyboardType: TextInputType.numberWithOptions(signed: false, decimal: true),
-                            style: titleStyle,
-                            textAlign: TextAlign.center,
-                            decoration: InputDecoration(
-                              hintText: "0"
+          builder: (context, setState) => AlertDialog(
+            
+              // ? Title.
+              title: const Text("Add transaction"),
+              content: 
+                  SizedBox(
+                    width: 500,
+                    height: 200,
+                    child: Column(
+                      children: [
+            
+                        // ? Amount field.
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text('\$ ', style: signStyle,),
+                            AutoSizeTextField(
+                              fullwidth: false,
+                              keyboardType: TextInputType.numberWithOptions(signed: false, decimal: true),
+                              style: titleStyle,
+                              textAlign: TextAlign.center,
+                              decoration: InputDecoration(
+                                hintText: "0"
+                              ),
+                              inputFormatters: [
+                                FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
+                              ],
+                              controller: amountController,
+                              autofocus: true,
                             ),
-                            inputFormatters: [
-                              FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
-                            ],
-                            controller: amountController,
-                            autofocus: true,
-                          ),
-                        ],
-                      ),
-          
-                      // ? Transaction description field.
-                      TextField(
-                        decoration: InputDecoration(
-                          hintText: "Description"
+                          ],
                         ),
-                        controller: transactionNameController,
-                      ),
-                    
-                      addVerticalSpace(15),
-
-                      // ? Date
-                      ElevatedButton(
-                        onPressed: () {
-                          setState(() {
-                            _selectDate(context);
-                          });
-                        }, 
-                        // child: Text(DateFormat('dd MMMM yyyy').format(selectedDate))
-                        child: Text("Select date"),
-                      ),
-                    
-                      Text(selectedDate.toString()),
-                    ],
+            
+                        // ? Transaction description field.
+                        TextField(
+                          decoration: InputDecoration(
+                            hintText: "Description"
+                          ),
+                          controller: transactionNameController,
+                        ),
+                      
+                        addVerticalSpace(15),
+          
+                        // ? Date button.
+                        ElevatedButton(
+                          onPressed: () {
+                            _showDatePicker(setState);
+                          }, 
+                          child: Text(DateFormat('dd MMMM yyyy').format(dateTime!)),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-            actions: [
-          
-              // ? Cancel button.
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  transactionNameController.clear();
-                  amountController.clear();
-                }, 
-                child: Text("Cancel")
-              ),
-          
-              // ? Add button.
-              TextButton(
-                onPressed: () {
-                  if (amountController.text.isNotEmpty) {
-                    Navigator.of(context).pop(TransactionReturnedData(transactionNameController.text, double.parse(amountController.text)));
-                  } else {
+              actions: [
+            
+                // ? Cancel button.
+                TextButton(
+                  onPressed: () {
                     Navigator.of(context).pop();
-                  }
-                  transactionNameController.clear();
-                  amountController.clear();
-                }, 
-                child: Text("Add")
-              )
-            ]
-          ),
+                    transactionNameController.clear();
+                    amountController.clear();
+                  }, 
+                  child: Text("Cancel")
+                ),
+            
+                // ? Add button.
+                TextButton(
+                  onPressed: () {
+                    if (amountController.text.isNotEmpty) {
+                      Navigator.of(context).pop(TransactionReturnedData(transactionNameController.text, double.parse(amountController.text)));
+                    } else {
+                      Navigator.of(context).pop();
+                    }
+                    transactionNameController.clear();
+                    amountController.clear();
+                  }, 
+                  child: Text("Add")
+                )
+              ]
+            ),
         );
       }
     );
