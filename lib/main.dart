@@ -114,15 +114,7 @@ class _MyHomePageState extends State<MyHomePage> {
           // ? Floating action button.
           floatingActionButton: FloatingActionButton(
             onPressed: () async {
-              final data = await _newTransactionDialog(context);
-
-              debugPrint(data);
-
-              if (data == null) return;
-              
-              setState(() {
-                selectedAccount.transactions.add(Transaction(data.description, data.amount, Icon(Icons.attach_money)));
-              });
+              _newTransactionDialog(context);
             },
             tooltip: "Add new transaction",
             child: Icon(Icons.add),
@@ -139,6 +131,10 @@ class _MyHomePageState extends State<MyHomePage> {
       builder: (BuildContext context) {
         var userModel = context.watch<UserModel>();
         var selectedAccount = userModel.selectedAccount;
+
+        var _defaultCategory = TransactionCategory("DEFAULT CATEGORY", Icon(Icons.attach_money), CategoryType.expense);
+
+        TransactionCategory selectedCategory = _defaultCategory;
 
         return StatefulBuilder(
           builder: (context, setState) => AlertDialog(
@@ -196,12 +192,12 @@ class _MyHomePageState extends State<MyHomePage> {
                       // ? Category button.
                       ElevatedButton(
                         onPressed: () async {
-                          var output = await showDialog(
+                          selectedCategory = await showDialog(
                             context: context, 
                             builder: (context) => ChooseCategoryDialog(userModel: userModel)
-                          ).then((value) {
-                            debugPrint("Category selected: ${value.name.toString()}");
-                          });
+                          );
+
+                          debugPrint("Selected category: ${selectedCategory.name.toString()}");
                         }, 
                         child: Text("Select category")
                       ),
@@ -223,7 +219,21 @@ class _MyHomePageState extends State<MyHomePage> {
               // ? Add button.
               TextButton(
                 onPressed: () {
-                  userModel.addTransaction(selectedAccount, Transaction(transactionNameController.text, double.parse(amountController.text), Icon(Icons.attach_money)));
+                  if (amountController.text.isEmpty || selectedCategory == _defaultCategory) {
+                    Navigator.of(context).pop();
+                    transactionNameController.clear();
+                    amountController.clear();
+                    return;
+                  }
+                  userModel.addTransaction( selectedAccount, 
+                    Transaction(
+                      transactionNameController.text, 
+                      (selectedCategory.categoryType == CategoryType.income) 
+                        ? double.parse(amountController.text) 
+                        : double.parse(amountController.text) * -1, 
+                      selectedCategory
+                    )
+                  );
 
                   Navigator.of(context).pop();
                   transactionNameController.clear();
@@ -236,21 +246,6 @@ class _MyHomePageState extends State<MyHomePage> {
         );
       }
     );
-  }
-
-  Future<TransactionCategory?> _chooseCategoryDialog(BuildContext context) async {
-    await showDialog<TransactionCategory>(
-      context: context,
-      builder: (BuildContext context) {
-
-        var userModel = context.watch<UserModel>();
-
-        return StatefulBuilder(
-          builder: (context, setState) => ChooseCategoryDialog(userModel: userModel)
-        );
-      }
-    );
-
   }
 }
 
@@ -296,8 +291,9 @@ class ChooseCategoryDialog extends StatelessWidget {
 class TransactionReturnedData {
   String description;
   double amount;
+  TransactionCategory category;
 
-  TransactionReturnedData(this.description, this.amount);
+  TransactionReturnedData(this.description, this.amount, this.category);
 }
 
 class AccountsDropdown extends StatefulWidget {
