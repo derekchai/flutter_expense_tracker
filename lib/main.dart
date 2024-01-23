@@ -113,7 +113,7 @@ class _MyHomePageState extends State<MyHomePage> {
           // ? Floating action button.
           floatingActionButton: FloatingActionButton(
             onPressed: () async {
-              final data = await _openDialog(context);
+              final data = await _newTransactionDialog(context);
 
               debugPrint(data);
 
@@ -131,9 +131,9 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  _openDialog(BuildContext context) async {
+  _newTransactionDialog(BuildContext context) async {
 
-    await showDialog<TransactionReturnedData>(
+    await showDialog(
       context: context,
       builder: (BuildContext context) {
         var userModel = context.watch<UserModel>();
@@ -192,6 +192,14 @@ class _MyHomePageState extends State<MyHomePage> {
                           }, 
                           child: Text(DateFormat('dd MMMM yyyy').format(dateTime!)),
                         ),
+
+                        // ? Category button.
+                        ElevatedButton(
+                          onPressed: () {
+                            _chooseCategoryDialog(context);
+                          }, 
+                          child: Text("Select category")
+                        ),
                       ],
                     ),
                   ),
@@ -224,6 +232,46 @@ class _MyHomePageState extends State<MyHomePage> {
       }
     );
   }
+
+  _chooseCategoryDialog(BuildContext context) async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        var userModel = context.watch<UserModel>();
+
+        return StatefulBuilder(
+          builder: (context, setState) => AlertDialog(
+            title: Text("Select category"),
+            content: SizedBox(
+              width: 500, 
+              height: 400, 
+              child: GridView.builder(
+                itemCount: userModel.categories.length,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 4),
+                itemBuilder: (context, index) {
+                  return Card(
+                    child: InkWell(
+                      onTap: () {doNothing();},
+                      customBorder: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          userModel.categories[index].icon,
+                          Text(userModel.categories[index].name),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          )
+        );
+      }
+    );
+  }
+
+
 }
 
 class TransactionReturnedData {

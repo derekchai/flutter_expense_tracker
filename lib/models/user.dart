@@ -27,7 +27,7 @@ class UserModel extends ChangeNotifier {
 
   UnmodifiableListView<Account> get accounts => UnmodifiableListView(_accounts);
 
-
+  List<TransactionCategory> get categories => _categories;
 
 
   void addAccount(Account account) {
