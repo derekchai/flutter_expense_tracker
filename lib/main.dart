@@ -2,7 +2,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_testing/models/account.dart';
 import 'package:flutter_testing/models/transaction.dart';
 import 'package:flutter_testing/models/user.dart';
 import 'package:flutter_testing/screens/accounts.dart';
@@ -88,7 +87,7 @@ class _MyHomePageState extends State<MyHomePage> {
     }
 
     return LayoutBuilder(
-      builder: (context, constraints) {
+      builder: (context, constraints) { 
 
         return Scaffold(
           body: Row(
@@ -211,11 +210,9 @@ class _MyHomePageState extends State<MyHomePage> {
                 // ? Add button.
                 TextButton(
                   onPressed: () {
-                    if (amountController.text.isNotEmpty) {
-                      Navigator.of(context).pop(TransactionReturnedData(transactionNameController.text, double.parse(amountController.text)));
-                    } else {
-                      Navigator.of(context).pop();
-                    }
+                    userModel.addTransaction(selectedAccount, Transaction(transactionNameController.text, double.parse(amountController.text), Icon(Icons.attach_money)));
+
+                    Navigator.of(context).pop();
                     transactionNameController.clear();
                     amountController.clear();
                   }, 
@@ -235,8 +232,6 @@ class TransactionReturnedData {
 
   TransactionReturnedData(this.description, this.amount);
 }
-
-
 
 class AccountsDropdown extends StatefulWidget {
   const AccountsDropdown({super.key});
