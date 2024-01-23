@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_testing/models/account.dart';
 import 'package:flutter_testing/models/transaction.dart';
 import 'package:flutter_testing/models/user.dart';
+import 'package:flutter_testing/screens/accounts.dart';
 import 'package:flutter_testing/screens/dashboard.dart';
 import 'package:flutter_testing/shared/styles.dart';
 import 'package:flutter_testing/utils/add_space.dart';
@@ -82,7 +83,7 @@ class _MyHomePageState extends State<MyHomePage> {
         page = DashboardPage();
         break;
       case 1:
-        page = MainPage();
+        page = AccountsPage();
         break;
     }
 
@@ -235,59 +236,7 @@ class TransactionReturnedData {
   TransactionReturnedData(this.description, this.amount);
 }
 
-class MainPage extends StatelessWidget {
-  const MainPage({
-    super.key,
-  });
 
-  @override
-  Widget build(BuildContext context) {
-    var userModel = context.watch<UserModel>();
-    var accounts = userModel.accounts;
-
-    var accountNameController = TextEditingController();
-
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Column(
-        children: <Widget>[
-    
-          AccountsDropdown(),
-    
-          TextField(
-            controller: accountNameController,
-            decoration: InputDecoration(
-              border: OutlineInputBorder(),
-              labelText: 'Account name',
-            ),
-            onSubmitted: (String value) {
-              userModel.addAccount(Account(value, <Transaction> []));
-
-              if (accounts.length == 1) {
-                userModel.selectAccount(0);
-                debugPrint("Selected account: ${userModel.selectedAccount.name}");
-              }
-
-              accountNameController.clear();
-            },
-          ),
-          
-          Expanded(
-            child: ListView.builder(
-              itemCount: accounts.length,
-              prototypeItem: Text('Test'),
-              itemBuilder: ((context, index) {
-                return ListTile(
-                  title: Text(accounts[index].name.toString())
-                );
-              }),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
 
 class AccountsDropdown extends StatefulWidget {
   const AccountsDropdown({super.key});
