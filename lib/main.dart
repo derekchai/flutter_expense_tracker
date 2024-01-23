@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_testing/models/category.dart';
 import 'package:flutter_testing/models/transaction.dart';
 import 'package:flutter_testing/models/user.dart';
 import 'package:flutter_testing/screens/accounts.dart';
@@ -140,138 +141,156 @@ class _MyHomePageState extends State<MyHomePage> {
         var selectedAccount = userModel.selectedAccount;
 
         return StatefulBuilder(
-
           builder: (context, setState) => AlertDialog(
             
               // ? Title.
               title: const Text("Add transaction"),
               content: 
-                  SizedBox(
-                    width: 500,
-                    height: 200,
-                    child: Column(
-                      children: [
-            
-                        // ? Amount field.
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text('\$ ', style: signStyle,),
-                            AutoSizeTextField(
-                              fullwidth: false,
-                              keyboardType: TextInputType.numberWithOptions(signed: false, decimal: true),
-                              style: titleStyle,
-                              textAlign: TextAlign.center,
-                              decoration: InputDecoration(
-                                hintText: "0"
-                              ),
-                              inputFormatters: [
-                                FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
-                              ],
-                              controller: amountController,
-                              autofocus: true,
-                            ),
-                          ],
-                        ),
-            
-                        // ? Transaction description field.
-                        TextField(
-                          decoration: InputDecoration(
-                            hintText: "Description"
-                          ),
-                          controller: transactionNameController,
-                        ),
-                      
-                        addVerticalSpace(15),
+                SizedBox(
+                  width: 500,
+                  height: 200,
+                  child: Column(
+                    children: [
           
-                        // ? Date button.
-                        ElevatedButton(
-                          onPressed: () {
-                            _showDatePicker(setState);
-                          }, 
-                          child: Text(DateFormat('dd MMMM yyyy').format(dateTime!)),
+                      // ? Amount field.
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text('\$ ', style: signStyle,),
+                          AutoSizeTextField(
+                            fullwidth: false,
+                            keyboardType: TextInputType.numberWithOptions(signed: false, decimal: true),
+                            style: titleStyle,
+                            textAlign: TextAlign.center,
+                            decoration: InputDecoration(
+                              hintText: "0"
+                            ),
+                            inputFormatters: [
+                              FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
+                            ],
+                            controller: amountController,
+                            autofocus: true,
+                          ),
+                        ],
+                      ),
+          
+                      // ? Transaction description field.
+                      TextField(
+                        decoration: InputDecoration(
+                          hintText: "Description"
                         ),
+                        controller: transactionNameController,
+                      ),
+                    
+                      addVerticalSpace(15),
+        
+                      // ? Date button.
+                      ElevatedButton(
+                        onPressed: () {
+                          _showDatePicker(setState);
+                        }, 
+                        child: Text(DateFormat('dd MMMM yyyy').format(dateTime!)),
+                      ),
 
-                        // ? Category button.
-                        ElevatedButton(
-                          onPressed: () {
-                            _chooseCategoryDialog(context);
-                          }, 
-                          child: Text("Select category")
-                        ),
-                      ],
-                    ),
+                      // ? Category button.
+                      ElevatedButton(
+                        onPressed: () async {
+                          var output = await showDialog(
+                            context: context, 
+                            builder: (context) => ChooseCategoryDialog(userModel: userModel)
+                          ).then((value) {
+                            debugPrint("Category selected: ${value.name.toString()}");
+                          });
+                        }, 
+                        child: Text("Select category")
+                      ),
+                    ],
                   ),
-              actions: [
-            
-                // ? Cancel button.
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    transactionNameController.clear();
-                    amountController.clear();
-                  }, 
-                  child: Text("Cancel")
                 ),
-            
-                // ? Add button.
-                TextButton(
-                  onPressed: () {
-                    userModel.addTransaction(selectedAccount, Transaction(transactionNameController.text, double.parse(amountController.text), Icon(Icons.attach_money)));
+            actions: [
+          
+              // ? Cancel button.
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  transactionNameController.clear();
+                  amountController.clear();
+                }, 
+                child: Text("Cancel")
+              ),
+          
+              // ? Add button.
+              TextButton(
+                onPressed: () {
+                  userModel.addTransaction(selectedAccount, Transaction(transactionNameController.text, double.parse(amountController.text), Icon(Icons.attach_money)));
 
-                    Navigator.of(context).pop();
-                    transactionNameController.clear();
-                    amountController.clear();
-                  }, 
-                  child: Text("Add")
-                )
-              ]
-            ),
+                  Navigator.of(context).pop();
+                  transactionNameController.clear();
+                  amountController.clear();
+                }, 
+                child: Text("Add")
+              )
+            ]
+          ),
         );
       }
     );
   }
 
-  _chooseCategoryDialog(BuildContext context) async {
-    await showDialog(
+  Future<TransactionCategory?> _chooseCategoryDialog(BuildContext context) async {
+    await showDialog<TransactionCategory>(
       context: context,
       builder: (BuildContext context) {
+
         var userModel = context.watch<UserModel>();
 
         return StatefulBuilder(
-          builder: (context, setState) => AlertDialog(
-            title: Text("Select category"),
-            content: SizedBox(
-              width: 500, 
-              height: 400, 
-              child: GridView.builder(
-                itemCount: userModel.categories.length,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 4),
-                itemBuilder: (context, index) {
-                  return Card(
-                    child: InkWell(
-                      onTap: () {doNothing();},
-                      customBorder: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          userModel.categories[index].icon,
-                          Text(userModel.categories[index].name),
-                        ],
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-          )
+          builder: (context, setState) => ChooseCategoryDialog(userModel: userModel)
         );
       }
     );
+
   }
+}
 
+class ChooseCategoryDialog extends StatelessWidget {
+  const ChooseCategoryDialog({
+    super.key,
+    required this.userModel,
+  });
 
+  final UserModel userModel;
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text("Select category"),
+      content: SizedBox(
+        width: 500, 
+        height: 400, 
+        child: GridView.builder(
+          itemCount: userModel.categories.length,
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 4),
+          itemBuilder: (context, index) {
+            return Card(
+              child: InkWell(
+                onTap: () { Navigator.of(context).pop(userModel.categories[index]); },
+                customBorder: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    userModel.categories[index].icon,
+                    Text(userModel.categories[index].name),
+                  ],
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
 }
 
 class TransactionReturnedData {
@@ -324,6 +343,5 @@ class _AccountsDropdownState extends State<AccountsDropdown> {
     );
   }
 }
-
 
 void doNothing() { }
