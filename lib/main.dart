@@ -132,9 +132,9 @@ class _MyHomePageState extends State<MyHomePage> {
         var userModel = context.watch<UserModel>();
         var selectedAccount = userModel.selectedAccount;
 
-        var _defaultCategory = TransactionCategory("DEFAULT CATEGORY", Icon(Icons.attach_money), CategoryType.expense);
+        TransactionCategory _defaultCategory = TransactionCategory("DEFAULT CATEGORY", Icon(Icons.attach_money), CategoryType.expense);
 
-        TransactionCategory selectedCategory = _defaultCategory;
+        TransactionCategory? selectedCategory = _defaultCategory;
 
         return StatefulBuilder(
           builder: (context, setState) => AlertDialog(
@@ -197,7 +197,12 @@ class _MyHomePageState extends State<MyHomePage> {
                             builder: (context) => ChooseCategoryDialog(userModel: userModel)
                           );
 
-                          debugPrint("Selected category: ${selectedCategory.name.toString()}");
+                          if (selectedCategory == null) {
+                            debugPrint("No category was selected.");
+                            return;
+                          }
+
+                          debugPrint("Selected category: ${selectedCategory!.name.toString()}");
                         }, 
                         child: Text("Select category")
                       ),
@@ -228,10 +233,10 @@ class _MyHomePageState extends State<MyHomePage> {
                   userModel.addTransaction( selectedAccount, 
                     Transaction(
                       transactionNameController.text, 
-                      (selectedCategory.categoryType == CategoryType.income) 
+                      (selectedCategory!.categoryType == CategoryType.income) 
                         ? double.parse(amountController.text) 
                         : double.parse(amountController.text) * -1, 
-                      selectedCategory
+                      selectedCategory!
                     )
                   );
 
