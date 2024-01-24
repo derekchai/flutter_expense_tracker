@@ -43,4 +43,12 @@ class UserModel extends ChangeNotifier {
     account.transactions.add(transaction);
     notifyListeners();
   }
+
+  void removeTransaction(Account account, int index) {
+    try {
+      account.transactions.removeAt(index);
+    } catch (exception) {
+      debugPrint("$exception Index in transactions out of bounds!");
+    }
+  }
 }

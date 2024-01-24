@@ -132,7 +132,7 @@ class _MyHomePageState extends State<MyHomePage> {
         var userModel = context.watch<UserModel>();
         var selectedAccount = userModel.selectedAccount;
 
-        TransactionCategory defaultCategory = TransactionCategory("DEFAULT CATEGORY", Icons.attach_money, CategoryType.expense);
+        TransactionCategory defaultCategory = TransactionCategory("Select account", Icons.menu, CategoryType.expense);
 
         TransactionCategory? selectedCategory = defaultCategory;
 
@@ -190,7 +190,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       ),
 
                       // ? Category button.
-                      ElevatedButton(
+                      ElevatedButton.icon(
                         onPressed: () async {
                           selectedCategory = await showDialog(
                             context: context, 
@@ -203,8 +203,11 @@ class _MyHomePageState extends State<MyHomePage> {
                           }
 
                           debugPrint("Selected category: ${selectedCategory!.name.toString()}");
+
+                          setState(() { doNothing(); });
                         }, 
-                        child: Text("Select category")
+                        label: Text(selectedCategory!.name),
+                        icon: Icon(selectedCategory!.iconData)
                       ),
                     ],
                   ),
@@ -269,7 +272,7 @@ class ChooseCategoryDialog extends StatelessWidget {
         children: [
           Expanded(child: Text("Select category")),
           IconButton(onPressed: doNothing, icon: Icon(Icons.edit)),
-          IconButton(onPressed: (doNothing), icon: Icon(Icons.add)),
+          IconButton(onPressed: doNothing, icon: Icon(Icons.add)),
         ],
       ),
       content: SizedBox(
@@ -312,50 +315,6 @@ class TransactionReturnedData {
   TransactionCategory category;
 
   TransactionReturnedData(this.description, this.amount, this.category);
-}
-
-class AccountsDropdown extends StatefulWidget {
-  const AccountsDropdown({super.key});
-
-  @override
-  State<AccountsDropdown> createState() => _AccountsDropdownState();
-}
-
-class _AccountsDropdownState extends State<AccountsDropdown> {
-  String dropdownValue = "";
-  
-  @override
-  Widget build(BuildContext context) {
-    var userModel = context.watch<UserModel>();
-    var accounts = userModel.accounts;
-
-    var accountNames = accounts.map<String>((account) => account.name).toList();
-
-    if (accounts.length == 1) {
-      dropdownValue = accounts[0].name;
-    }
-
-    return DropdownButton<String>(
-      value: dropdownValue.isEmpty ? null : dropdownValue,
-      icon: const Icon(Icons.arrow_downward),
-      onChanged: (String? value) {
-        setState(() {
-          dropdownValue = value!;
-          userModel.selectAccount(accountNames.indexOf(value));
-          debugPrint("Selected account: ${userModel.selectedAccount.name}");
-        });
-      },
-      items: accountNames.map<DropdownMenuItem<String>>((String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(value),
-          ),
-        );
-      }).toList(),
-    );
-  }
 }
 
 void doNothing() { }
