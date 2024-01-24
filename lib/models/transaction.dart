@@ -1,9 +1,10 @@
-import 'package:flutter/material.dart';
+import 'package:flutter_testing/models/category.dart';
 
 class Transaction {
   String description = "";
   double amount = 0;
-  Icon icon = const Icon(Icons.attach_money);
+  TransactionCategory category;
+  
 
-  Transaction(this.description, this.amount, this.icon);
+  Transaction(this.description, this.amount, this.category);
 }
