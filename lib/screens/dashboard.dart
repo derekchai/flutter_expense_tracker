@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
 
 import 'package:flutter/material.dart';
+import 'package:flutter_testing/models/category.dart';
 import 'package:flutter_testing/models/user.dart';
 import 'package:flutter_testing/shared/styles.dart';
 import 'package:flutter_testing/utils/add_space.dart';
@@ -73,7 +74,7 @@ class DashboardPage extends StatelessWidget {
                               ]
                           )),
 
-                          const Text('XX.XX'),
+                          Text(formatAsCurrency(userModel.selectedAccount.sumOf(CategoryType.income))),
                         ]
                       ),
 
@@ -86,7 +87,7 @@ class DashboardPage extends StatelessWidget {
                             ]
                           )),
 
-                          const Text('XX.XX'),
+                          Text(formatAsCurrency(userModel.selectedAccount.sumOf(CategoryType.expense))),
                         ]
                       ),
                     ],
@@ -119,10 +120,10 @@ class DashboardPage extends StatelessWidget {
                   return Card(
                     child: Center(
                       child: ListTile(
-                        leading: Icon(selectedAccount.transactions[index].category.iconData),
+                        leading: Icon(selectedAccount.transactions[index].category.iconData, color: selectedAccount.transactions[index].category.categoryType.color),
                         title: Text(selectedAccount.transactions[index].description.toString()),
                       
-                        subtitle: Text(NumberFormat.simpleCurrency(locale: "en_US").format(selectedAccount.transactions[index].amount)),
+                        subtitle: Text(formatAsCurrency(selectedAccount.transactions[index].amount)),
                       ),
                     ),
                   );
@@ -136,3 +137,4 @@ class DashboardPage extends StatelessWidget {
   }
 }
 
+String formatAsCurrency(double d) => NumberFormat.simpleCurrency(locale: "en_US").format(d);

@@ -91,6 +91,12 @@ class _MyHomePageState extends State<MyHomePage> {
       builder: (context, constraints) { 
 
         return Scaffold(
+          appBar: AppBar(
+            title: const Text("Expense Tracker"),
+            actions: const [
+              AccountsDropdown(),
+            ],
+          ),
           body: Row(
             children: [
               SafeArea(
@@ -132,9 +138,9 @@ class _MyHomePageState extends State<MyHomePage> {
         var userModel = context.watch<UserModel>();
         var selectedAccount = userModel.selectedAccount;
 
-        TransactionCategory defaultCategory = TransactionCategory("Select account", Icons.menu, CategoryType.expense);
+        TransactionCategory noCategory = TransactionCategory("Select category", Icons.menu, CategoryType.noCategory);
 
-        TransactionCategory? selectedCategory = defaultCategory;
+        TransactionCategory? selectedCategory = noCategory;
 
         return StatefulBuilder(
           builder: (context, setState) => AlertDialog(
@@ -181,33 +187,43 @@ class _MyHomePageState extends State<MyHomePage> {
                     
                       addVerticalSpace(15),
         
-                      // ? Date button.
-                      ElevatedButton(
-                        onPressed: () {
-                          _showDatePicker(setState);
-                        }, 
-                        child: Text(DateFormat('dd MMMM yyyy').format(dateTime!)),
-                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
 
-                      // ? Category button.
-                      ElevatedButton.icon(
-                        onPressed: () async {
-                          selectedCategory = await showDialog(
-                            context: context, 
-                            builder: (context) => ChooseCategoryDialog(userModel: userModel)
-                          );
+                          // ? Date button.
+                          ElevatedButton(
+                            onPressed: () {
+                              _showDatePicker(setState);
+                            }, 
+                            child: Text(DateFormat('dd MMMM yyyy').format(dateTime!)),
+                          ),
 
-                          if (selectedCategory == null) {
-                            debugPrint("No category was selected.");
-                            return;
-                          }
-
-                          debugPrint("Selected category: ${selectedCategory!.name.toString()}");
-
-                          setState(() { doNothing(); });
-                        }, 
-                        label: Text(selectedCategory!.name),
-                        icon: Icon(selectedCategory!.iconData)
+                          // ? Category button.
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: ElevatedButton.icon(
+                              onPressed: () async {
+                                selectedCategory = await showDialog(
+                                  context: context, 
+                                  builder: (context) => ChooseCategoryDialog(userModel: userModel)
+                                );
+                            
+                                if (selectedCategory == null) {
+                                  debugPrint("No category was selected.");
+                                  return;
+                                }
+                            
+                                debugPrint("Selected category: ${selectedCategory!.name.toString()}");
+                            
+                                setState(() {});
+                              }, 
+                              label: Text(selectedCategory!.name),
+                              icon: Icon(selectedCategory!.iconData, 
+                                color: selectedCategory!.categoryType.color)
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -227,7 +243,7 @@ class _MyHomePageState extends State<MyHomePage> {
               // ? Add button.
               TextButton(
                 onPressed: () {
-                  if (amountController.text.isEmpty || selectedCategory == defaultCategory) {
+                  if (amountController.text.isEmpty || selectedCategory == noCategory) {
                     Navigator.of(context).pop();
                     transactionNameController.clear();
                     amountController.clear();
@@ -269,7 +285,7 @@ class ChooseCategoryDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Row(
-        children: [
+        children: const [
           Expanded(child: Text("Select category")),
           IconButton(onPressed: doNothing, icon: Icon(Icons.edit)),
           IconButton(onPressed: doNothing, icon: Icon(Icons.add)),
@@ -291,11 +307,7 @@ class ChooseCategoryDialog extends StatelessWidget {
                   children: <Widget>[
                     Icon(
                       userModel.categories[index].iconData,
-                      color: (userModel.categories[index].categoryType == CategoryType.income) 
-                        ? Colors.green 
-                        : (userModel.categories[index].categoryType == CategoryType.expense) 
-                          ? Colors.red 
-                          : Colors.amber,
+                      color: userModel.categories[index].categoryType.color,
                     ),
                     Text(userModel.categories[index].name),
                   ],

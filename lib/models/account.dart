@@ -1,3 +1,4 @@
+import 'package:flutter_testing/models/category.dart';
 import 'package:flutter_testing/models/transaction.dart';
 import 'package:collection/collection.dart';
 
@@ -14,4 +15,16 @@ class Account {
   }
 
   Account(this.name, this.transactions);
+
+  double sumOf(CategoryType categoryType) {
+    double output = 0;
+
+    for (var transaction in transactions) {
+      if (transaction.category.categoryType == categoryType) {
+        output += transaction.amount;
+      }
+    }
+
+    return output;
+  }
 }

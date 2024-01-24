@@ -14,6 +14,8 @@ List<TransactionCategory> _defaultCategories = [
   TransactionCategory("Fuel", Icons.local_gas_station, CategoryType.expense),
   TransactionCategory("Entertainment", Icons.theater_comedy, CategoryType.expense),
   TransactionCategory("Groceries", Icons.local_grocery_store, CategoryType.expense),
+
+  TransactionCategory("Savings", Icons.savings, CategoryType.savings),
 ];
 
 class UserModel extends ChangeNotifier {
