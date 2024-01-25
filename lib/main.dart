@@ -1,5 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_testing/models/category.dart';
@@ -17,7 +19,13 @@ import 'package:auto_size_text_field/auto_size_text_field.dart';
 void main() {
   UserModel u = UserModel();
 
-  debugPrint(Icons.menu.toString());
+  String json = jsonEncode(u);
+
+  debugPrint(json);
+
+  var uFromJsonMap = jsonDecode(json) as Map<String, dynamic>;
+  final uFromJson = UserModel.fromJson(uFromJsonMap);
+
 
   runApp(ChangeNotifierProvider(
     create: (context) => u,
