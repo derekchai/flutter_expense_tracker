@@ -19,3 +19,8 @@ const subtitleStyle = TextStyle(
   fontWeight: FontWeight.w400,
   fontSize: 14, // Default font size is 14.
 );
+
+const subtitleStyleSz18 = TextStyle(
+  fontWeight: FontWeight.w400,
+  fontSize: 18, // Default font size is 14.
+);

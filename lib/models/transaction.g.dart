@@ -10,6 +10,7 @@ Transaction _$TransactionFromJson(Map<String, dynamic> json) => Transaction(
       json['description'] as String,
       (json['amount'] as num).toDouble(),
       TransactionCategory.fromJson(json['category'] as Map<String, dynamic>),
+      DateTime.parse(json['date'] as String),
     );
 
 Map<String, dynamic> _$TransactionToJson(Transaction instance) =>
@@ -17,4 +18,5 @@ Map<String, dynamic> _$TransactionToJson(Transaction instance) =>
       'description': instance.description,
       'amount': instance.amount,
       'category': instance.category,
+      'date': instance.date.toIso8601String(),
     };

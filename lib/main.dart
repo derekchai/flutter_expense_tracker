@@ -265,7 +265,8 @@ class _MyHomePageState extends State<MyHomePage> {
                       (selectedCategory!.categoryType == CategoryType.income) 
                         ? double.parse(amountController.text) 
                         : double.parse(amountController.text) * -1, 
-                      selectedCategory!
+                      selectedCategory!,
+                      dateTime!
                     )
                   );
 
