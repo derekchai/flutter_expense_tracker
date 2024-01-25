@@ -1,5 +1,3 @@
-// ignore_for_file: prefer_const_constructors
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_testing/models/category.dart';
@@ -7,7 +5,8 @@ import 'package:flutter_testing/models/transaction.dart';
 import 'package:flutter_testing/models/user.dart';
 import 'package:flutter_testing/screens/accounts.dart';
 import 'package:flutter_testing/screens/dashboard.dart';
-import 'package:flutter_testing/shared/styles.dart';
+import 'package:flutter_testing/screens/transactions.dart';
+import 'package:flutter_testing/utils/styles.dart';
 import 'package:flutter_testing/utils/add_space.dart';
 import 'package:flutter_testing/utils/json_icon.dart';
 import 'package:flutter_testing/utils/read_write.dart';
@@ -35,13 +34,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Flutter Expense Tracker',
       darkTheme: ThemeData.dark(),
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MyHomePage(title: 'Flutter Expense Tracker Home Page'),
     );
   }
 }
@@ -87,11 +86,13 @@ class _MyHomePageState extends State<MyHomePage> {
 
     switch (navigationRailIndex) {
       case 0: 
-        page = DashboardPage();
+        page = const DashboardPage();
         break;
       case 1:
-        page = AccountsPage();
+        page = const TransactionsPage();
         break;
+      case 2: 
+        page = const AccountsPage();
     }
 
     return LayoutBuilder(
@@ -101,8 +102,8 @@ class _MyHomePageState extends State<MyHomePage> {
           appBar: AppBar(
             title: const Text("Expense Tracker"),
             actions: [
-              IconButton(onPressed: () {save(u);} , icon: Icon(Icons.save)),
-              AccountsDropdown(),
+              const AccountsDropdown(),
+              IconButton(onPressed: () {save(u);} , icon: const Icon(Icons.save)),
             ],
           ),
           body: Row(
@@ -114,6 +115,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   destinations: const [
                     NavigationRailDestination(icon: Icon(Icons.dashboard), label: Text('Dashboard')),
                     NavigationRailDestination(icon: Icon(Icons.attach_money), label: Text('Transactions')),
+                    NavigationRailDestination(icon: Icon(Icons.account_balance_wallet), label: Text('Accounts')),
                   ],
                   onDestinationSelected: (value) {setState(() {
                     navigationRailIndex = value;
@@ -131,7 +133,7 @@ class _MyHomePageState extends State<MyHomePage> {
               _newTransactionDialog(context);
             },
             tooltip: "Add new transaction",
-            child: Icon(Icons.add),
+            child: const Icon(Icons.add),
           ),
         );
       }
@@ -167,13 +169,13 @@ class _MyHomePageState extends State<MyHomePage> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Text('\$ ', style: signStyle,),
+                          const Text('\$ ', style: signStyle,),
                           AutoSizeTextField(
                             fullwidth: false,
-                            keyboardType: TextInputType.numberWithOptions(signed: false, decimal: true),
+                            keyboardType: const TextInputType.numberWithOptions(signed: false, decimal: true),
                             style: titleStyle,
                             textAlign: TextAlign.center,
-                            decoration: InputDecoration(
+                            decoration: const InputDecoration(
                               hintText: "0"
                             ),
                             inputFormatters: [
@@ -187,7 +189,7 @@ class _MyHomePageState extends State<MyHomePage> {
           
                       // ? Transaction description field.
                       TextField(
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           hintText: "Description"
                         ),
                         controller: transactionNameController,
@@ -245,7 +247,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   transactionNameController.clear();
                   amountController.clear();
                 }, 
-                child: Text("Cancel")
+                child: const Text("Cancel")
               ),
           
               // ? Add button.
@@ -271,7 +273,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   transactionNameController.clear();
                   amountController.clear();
                 }, 
-                child: Text("Add")
+                child: const Text("Add")
               )
             ]
           ),
@@ -292,8 +294,8 @@ class ChooseCategoryDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Row(
-        children: const [
+      title: const Row(
+        children: [
           Expanded(child: Text("Select category")),
           IconButton(onPressed: doNothing, icon: Icon(Icons.edit)),
           IconButton(onPressed: doNothing, icon: Icon(Icons.add)),
@@ -336,9 +338,5 @@ class TransactionReturnedData {
 
   TransactionReturnedData(this.description, this.amount, this.category);
 }
-
-
-
-
 
 void doNothing() { }
