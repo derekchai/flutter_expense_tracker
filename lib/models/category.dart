@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:json_annotation/json_annotation.dart';
+
+part 'category.g.dart';
 
 enum CategoryType {
   income,
@@ -22,10 +25,13 @@ extension CategoryColor on CategoryType {
   }
 }
 
-class TransactionCategory {
+@JsonSerializable() class TransactionCategory {
   String name;
-  IconData iconData;
+  String iconData;
   CategoryType categoryType;
 
   TransactionCategory(this.name, this.iconData, this.categoryType);
+
+  factory TransactionCategory.fromJson(Map<String, dynamic> json) => _$TransactionCategoryFromJson(json);
+  Map<String, dynamic> toJson() => _$TransactionCategoryToJson(this);
 }

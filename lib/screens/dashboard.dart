@@ -5,6 +5,7 @@ import 'package:flutter_testing/models/category.dart';
 import 'package:flutter_testing/models/user.dart';
 import 'package:flutter_testing/shared/styles.dart';
 import 'package:flutter_testing/utils/add_space.dart';
+import 'package:flutter_testing/utils/json_icon.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 
@@ -120,7 +121,7 @@ class DashboardPage extends StatelessWidget {
                   return Card(
                     child: Center(
                       child: ListTile(
-                        leading: Icon(selectedAccount.transactions[index].category.iconData, color: selectedAccount.transactions[index].category.categoryType.color),
+                        leading: Icon(iconMap[selectedAccount.transactions[index].category.iconData], color: selectedAccount.transactions[index].category.categoryType.color),
                         title: Text(selectedAccount.transactions[index].description.toString()),
                       
                         subtitle: Text(formatAsCurrency(selectedAccount.transactions[index].amount)),

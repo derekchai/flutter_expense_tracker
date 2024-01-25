@@ -9,13 +9,18 @@ import 'package:flutter_testing/screens/accounts.dart';
 import 'package:flutter_testing/screens/dashboard.dart';
 import 'package:flutter_testing/shared/styles.dart';
 import 'package:flutter_testing/utils/add_space.dart';
+import 'package:flutter_testing/utils/json_icon.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:auto_size_text_field/auto_size_text_field.dart';
 
 void main() {
+  UserModel u = UserModel();
+
+  debugPrint(Icons.menu.toString());
+
   runApp(ChangeNotifierProvider(
-    create: (context) => UserModel(),
+    create: (context) => u,
     child: const MyApp()
     )
   );
@@ -138,7 +143,7 @@ class _MyHomePageState extends State<MyHomePage> {
         var userModel = context.watch<UserModel>();
         var selectedAccount = userModel.selectedAccount;
 
-        TransactionCategory noCategory = TransactionCategory("Select category", Icons.menu, CategoryType.noCategory);
+        TransactionCategory noCategory = TransactionCategory("Select category", Icons.menu.toString(), CategoryType.noCategory);
 
         TransactionCategory? selectedCategory = noCategory;
 
@@ -219,7 +224,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 setState(() {});
                               }, 
                               label: Text(selectedCategory!.name),
-                              icon: Icon(selectedCategory!.iconData, 
+                              icon: Icon((selectedCategory == noCategory) ? Icons.menu : iconMap[selectedCategory!.iconData], 
                                 color: selectedCategory!.categoryType.color)
                             ),
                           ),
@@ -306,7 +311,7 @@ class ChooseCategoryDialog extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Icon(
-                      userModel.categories[index].iconData,
+                      iconMap[userModel.categories[index].iconData],
                       color: userModel.categories[index].categoryType.color,
                     ),
                     Text(userModel.categories[index].name),

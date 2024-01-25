@@ -1,9 +1,12 @@
 import 'package:flutter_testing/models/category.dart';
 import 'package:flutter_testing/models/transaction.dart';
 import 'package:collection/collection.dart';
+import 'package:json_annotation/json_annotation.dart';
+
+part 'account.g.dart';
 
 
-class Account {
+@JsonSerializable() class Account {
   String name;
   List<Transaction> transactions; 
 
@@ -27,4 +30,7 @@ class Account {
 
     return output;
   }
+
+  factory Account.fromJson(Map<String, dynamic> json) => _$AccountFromJson(json);
+  Map<String, dynamic> toJson() => _$AccountToJson(this);
 }
