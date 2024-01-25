@@ -12,20 +12,16 @@ import 'package:flutter_testing/screens/dashboard.dart';
 import 'package:flutter_testing/shared/styles.dart';
 import 'package:flutter_testing/utils/add_space.dart';
 import 'package:flutter_testing/utils/json_icon.dart';
+import 'package:flutter_testing/utils/read_write.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:auto_size_text_field/auto_size_text_field.dart';
 
-void main() {
-  UserModel u = UserModel();
+UserModel u = UserModel();
 
-  String json = jsonEncode(u);
+void main() async {
 
-  debugPrint(json);
-
-  var uFromJsonMap = jsonDecode(json) as Map<String, dynamic>;
-  final uFromJson = UserModel.fromJson(uFromJsonMap);
-
+  u = await load();
 
   runApp(ChangeNotifierProvider(
     create: (context) => u,
@@ -106,7 +102,8 @@ class _MyHomePageState extends State<MyHomePage> {
         return Scaffold(
           appBar: AppBar(
             title: const Text("Expense Tracker"),
-            actions: const [
+            actions: [
+              IconButton(onPressed: () {save(u);} , icon: Icon(Icons.save)),
               AccountsDropdown(),
             ],
           ),
@@ -341,5 +338,9 @@ class TransactionReturnedData {
 
   TransactionReturnedData(this.description, this.amount, this.category);
 }
+
+
+
+
 
 void doNothing() { }
