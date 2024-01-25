@@ -39,7 +39,7 @@ class DashboardPage extends StatelessWidget {
 
         addVerticalSpace(10),
 
-        TransactionsListView(heightFactor: 0.4)
+        TransactionsListView(heightFactor: 0.6)
       ],
     );
   }

@@ -7,6 +7,7 @@ import 'package:flutter_testing/screens/dashboard.dart';
 import 'package:flutter_testing/utils/add_space.dart';
 import 'package:flutter_testing/utils/json_icon.dart';
 import 'package:flutter_testing/utils/styles.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class TransactionsPage extends StatelessWidget {
@@ -65,16 +66,30 @@ class _TransactionsListViewState extends State<TransactionsListView> {
                       iconMap[selectedAccount.transactions[index].category.iconData],
                       color: selectedAccount.transactions[index].category.categoryType.color
                     ),
-                    title: Text(selectedAccount.transactions[index].description.toString()),
-                    subtitle: Text(formatAsCurrency(selectedAccount.transactions[index].amount)),
-                    trailing: IconButton(
-                      onPressed: () { setState(() {
-                        userModel.removeTransaction(selectedAccount, index);
-                      });}, 
-                      icon: Icon(Icons.close),
-                      
-                      hoverColor: Colors.red.withOpacity(0.3),
-                      highlightColor: Colors.red,
+                    title: Expanded(
+                      child: Text(selectedAccount.transactions[index].description.toString())
+                    ),
+                    subtitle: Text(DateFormat('dd MMMM yyyy').format(selectedAccount.transactions[index].date)),
+                    trailing: SizedBox(
+                      width: 200,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(formatAsCurrency(selectedAccount.transactions[index].amount), style: subtitleStyleSz18),
+                          ), 
+                          IconButton(
+                            onPressed: () { setState(() {
+                              userModel.removeTransaction(selectedAccount, index);
+                            });}, 
+                            icon: Icon(Icons.close),
+                            
+                            hoverColor: Colors.red.withOpacity(0.3),
+                            highlightColor: Colors.red,
+                          ),
+                        ],
+                      ),
                     ),
                   )
                 )
